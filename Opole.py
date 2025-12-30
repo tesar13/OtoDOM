@@ -19,7 +19,7 @@ KNOWN_IDS_FILE = os.path.join(BASE_DIR, "known_ids.json")
 os.makedirs(EXCEL_DIR, exist_ok=True)
 
 TELEGRAM_TOKEN = "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
-TELEGRAM_CHAT_ID = "8541364332"
+TELEGRAM_CHAT_ID = "1233434142"
 
 
 # Funkcja wysyłająca plik na Telegrama
@@ -232,4 +232,5 @@ def process_offers(offers, known_ids, collected):
 
 if __name__ == "__main__":
     main()
+
 
