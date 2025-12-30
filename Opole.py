@@ -119,9 +119,13 @@ def main():
     if collected:
         df = pd.DataFrame(collected)
         today = datetime.datetime.now().strftime("%d.%m")  # Format DD.MM
+        sheet_name = today  # Nazwa arkusza = data
         filename = f"{LOCATION_NAME}_{today}.xlsx"
         full_path = os.path.join(EXCEL_DIR, filename)
-        df.to_excel(full_path, index=False)
+        
+        # Zapisujemy z niestandardową nazwą arkusza
+        with pd.ExcelWriter(full_path, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
         print(f"Zapisano {len(df)} ofert → {filename}")
         
         # Wysyłka na Telegrama
@@ -232,5 +236,6 @@ def process_offers(offers, known_ids, collected):
 
 if __name__ == "__main__":
     main()
+
 
 
