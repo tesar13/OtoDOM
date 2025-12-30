@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TELEGRAM_TOKEN: "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
-      TELEGRAM_CHAT_ID: "8541364332"
+      TELEGRAM_CHAT_ID: "1233434142"
     steps:
       - name: Pobierz kod z repo
         uses: actions/checkout@v3
