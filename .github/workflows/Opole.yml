@@ -1,0 +1,76 @@
+name: Opole
+
+on:
+  schedule:
+    - cron: "0 21 * * *"  # uruchamia się codziennie o 22:00 czasu polskiego (21:00 UTC)
+  workflow_dispatch:      # pozwala uruchomić ręcznie
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_TOKEN: "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
+      TELEGRAM_CHAT_ID: "8541364332"
+    steps:
+      - name: Pobierz kod z repo
+        uses: actions/checkout@v3
+
+      - name: Zainstaluj Pythona
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Zainstaluj wymagane biblioteki
+        run: |
+          pip install -r requirements.txt
+
+      - name: Uruchom skrypt
+        run: |
+          python Opole.py
+
+      - name: Zapisz plik Excel jako artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: raport_Opole
+          path: Opole_*.xlsx
+
+  retry_if_failed:
+    runs-on: ubuntu-latest
+    needs: run-script
+    if: failure()   # uruchomi się tylko jeśli run-script zakończy się błędem
+    steps:
+      - name: Odczekaj 15 minut
+        run: sleep 900
+
+      - name: Pobierz kod z repo
+        uses: actions/checkout@v3
+
+      - name: Zainstaluj Pythona
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Zainstaluj wymagane biblioteki
+        run: |
+          pip install -r requirements.txt
+
+      - name: Uruchom skrypt ponownie
+        run: |
+          python Opole.py
+
+      - name: Zapisz plik Excel jako artifact (retry)
+        uses: actions/upload-artifact@v4
+        with:
+          name: raport_Opole_retry
+          path: Opole_*.xlsx
+          
+  notify-on-failure:
+    runs-on: ubuntu-latest
+    needs: [run-script, retry_if_failed]
+    if: failure()   # uruchomi się tylko jeśli poprzednie joby zakończą się błędem
+    steps:
+      - name: Wyślij powiadomienie na Telegrama
+        run: |
+          curl -s -X POST https://api.telegram.org/bot8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ/sendMessage \
+          -d chat_id=8541364332 \
+          -d text="❌ Skrypt ${{ github.workflow }} zakończył się błędem"
