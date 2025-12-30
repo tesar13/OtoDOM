@@ -74,5 +74,5 @@ jobs:
       - name: Wyślij powiadomienie na Telegrama
         run: |
           curl -s -X POST https://api.telegram.org/bot8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ/sendMessage \
-          -d chat_id=8541364332 \
+          -d chat_id=1233434142 \
           -d text="❌ Skrypt ${{ github.workflow }} zakończył się błędem"
