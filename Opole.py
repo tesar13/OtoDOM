@@ -16,11 +16,10 @@ LOCATION_NAME = "Opole"  # Używamy tylko "Opole" w nazwie pliku
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXCEL_DIR = os.path.join(BASE_DIR, "data_excel")
 KNOWN_IDS_FILE = os.path.join(BASE_DIR, "known_ids.json")
-CONFIG_FILE = os.path.join(BASE_DIR, "config.yml")  # Plik z danymi Telegrama
 os.makedirs(EXCEL_DIR, exist_ok=True)
 
-TELEGRAM_TOKEN: "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
-TELEGRAM_CHAT_ID: "8541364332"
+TELEGRAM_TOKEN = "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
+TELEGRAM_CHAT_ID = "8541364332"
 
 
 # Funkcja wysyłająca plik na Telegrama
@@ -233,3 +232,4 @@ def process_offers(offers, known_ids, collected):
 
 if __name__ == "__main__":
     main()
+
