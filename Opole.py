@@ -23,19 +23,27 @@ TELEGRAM_CHAT_ID = "1233434142"
 
 
 # Funkcja wysyłająca plik na Telegrama
-def send_to_telegram(file_path):
+def send_to_telegram(file_path, max_retries=5, delay=10):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendDocument"
-    try:
-        with open(file_path, "rb") as f:
-            files = {"document": f}
-            data = {"chat_id": TELEGRAM_CHAT_ID}
-            response = requests.post(url, data=data, files=files, timeout=60)
-        if response.status_code == 200:
-            print("Plik Excel został pomyślnie wysłany na Telegrama.")
-        else:
-            print(f"Błąd wysyłania na Telegrama: {response.status_code} – {response.text}")
-    except Exception as e:
-        print(f"Wyjątek podczas wysyłania na Telegrama: {e}")
+    for attempt in range(1, max_retries + 1):
+        try:
+            with open(file_path, "rb") as f:
+                files = {"document": f}
+                data = {"chat_id": TELEGRAM_CHAT_ID}
+                response = requests.post(url, data=data, files=files, timeout=60)
+            if response.status_code == 200:
+                print("Plik Excel został pomyślnie wysłany na Telegrama.")
+                return
+            else:
+                print(f"Błąd wysyłania na Telegrama (próba {attempt}): {response.status_code} – {response.text}")
+        except Exception as e:
+            print(f"Wyjątek podczas wysyłania na Telegrama (próba {attempt}): {e}")
+        
+        if attempt < max_retries:
+            print(f"Ponawiam za {delay} sekund...")
+            time.sleep(delay)
+    
+    print("Nie udało się wysłać pliku po wszystkich próbach.")
 
 # ---------- requests session ----------
 session = requests.Session()
@@ -236,6 +244,7 @@ def process_offers(offers, known_ids, collected):
 
 if __name__ == "__main__":
     main()
+
 
 
 
