@@ -8,7 +8,7 @@ import time
 import os
 import random
 import json
-import yaml  # Dodajemy import yaml
+import yaml
 
 BASE_URL = "https://www.otodom.pl"
 SEARCH_URL = "https://www.otodom.pl/pl/wyniki/sprzedaz/dom/opolskie/opole/opole/opole?distanceRadius=10&limit=72&ownerTypeSingleSelect=ALL&priceMax=1000000&by=DEFAULT&direction=DESC"
@@ -151,7 +151,7 @@ def process_offers(offers, known_ids, collected):
         price = price_dict.get("value") or price_dict.get("amount")
         currency = price_dict.get("currency")
         
-        # Lokalizacja – bezpieczne wyciągnięcie
+        # Lokalizacja
         location_address = offer.get("location", {}).get("address", {})
         location_city = ""
         location_street = ""
@@ -189,7 +189,7 @@ def process_offers(offers, known_ids, collected):
         if is_new:
             known_ids.add(offer_id)
         
-        # Szczegóły z strony szczegółowej
+        # Szczegóły z ogłoszenia
         description = ""
         pokoje = ""
         rok_budowy = ""
@@ -244,6 +244,7 @@ def process_offers(offers, known_ids, collected):
 
 if __name__ == "__main__":
     main()
+
 
 
 
