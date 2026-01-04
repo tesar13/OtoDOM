@@ -11,7 +11,7 @@ import json
 import yaml
 
 BASE_URL = "https://www.otodom.pl"
-SEARCH_URL = "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/malopolskie/chrzanowski/trzebinia/trzebinia?limit=36&ownerTypeSingleSelect=ALL&by=DEFAULT&direction=DESC"
+SEARCH_URL = "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/malopolskie/chrzanowski/trzebinia/trzebinia?distanceRadius=15&limit=72&ownerTypeSingleSelect=ALL&by=DEFAULT&direction=DESC"
 LOCATION_NAME = "Trzebinia"  # Używamy tylko "Trzebinia" w nazwie pliku
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXCEL_DIR = os.path.join(BASE_DIR, "data_excel")
@@ -311,3 +311,4 @@ def process_offers(offers, known_ids, collected):
 
 if __name__ == "__main__":
     main()
+
