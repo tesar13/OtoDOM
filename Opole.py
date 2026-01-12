@@ -8,7 +8,6 @@ import time
 import os
 import random
 import json
-import yaml
 
 BASE_URL = "https://www.otodom.pl"
 SEARCH_URL = "https://www.otodom.pl/pl/wyniki/sprzedaz/dom/opolskie/opole/opole/opole?distanceRadius=10&limit=72&ownerTypeSingleSelect=ALL&priceMax=1000000&by=DEFAULT&direction=DESC"
@@ -145,6 +144,16 @@ def process_offers(offers, known_ids, collected):
     for idx, offer in enumerate(offers):
         offer_id = offer.get("id")
         slug = offer.get("slug")
+
+        base36_id = slug.split('-ID')[-1] if '-ID' in slug else ''
+        if base36_id:
+            try:
+                offer_id = int(base36_id, 36)  # Konwersja base36 na int (poprawne ID)
+            except ValueError:
+                print(f"Błąd konwersji base36 dla slug: {slug}. Używam fallback.")
+                offer_id = offer.get("id")
+            else:
+                offer_id = offer.get("id")  # Fallback, jeśli brak '-ID' w slug (rzadkie)
         
         # Cena i waluta
         price_dict = offer.get("totalPrice", {}) or offer.get("price", {})
@@ -201,6 +210,10 @@ def process_offers(offers, known_ids, collected):
             if r_detail.status_code == 200:
                 data_detail = extract_next_data(r_detail.text)
                 ad = data_detail["props"]["pageProps"]["ad"]
+
+                detail_id = ad.get("id")
+                if detail_id and detail_id != offer_id:
+                    offer_id = detail_id  # Nadpisz na ID z detali, jeśli dostępne i różne                
                 
                 # Opis – czysty tekst bez HTML
                 html_desc = ad.get("description", "").strip()
