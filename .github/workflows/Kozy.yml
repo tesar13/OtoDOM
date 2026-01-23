@@ -2,7 +2,7 @@ name: Kozy
 
 on:
   schedule:
-    - cron: "20 22 * * *"  # uruchamia się codziennie o 23:20 czasu polskiego (22:20 UTC)
+    - cron: "30 21 * * *"  # uruchamia się codziennie o 22:30 czasu polskiego (21:30 UTC)
   workflow_dispatch:      # pozwala uruchomić ręcznie
 
 jobs:
