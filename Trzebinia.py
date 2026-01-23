@@ -14,7 +14,6 @@ SEARCH_URL = "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/malopolskie/ch
 LOCATION_NAME = "Trzebinia"  # Używamy tylko "Trzebinia" w nazwie pliku
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXCEL_DIR = os.path.join(BASE_DIR, "data_excel")
-KNOWN_IDS_FILE = os.path.join(BASE_DIR, "known_ids.json")
 os.makedirs(EXCEL_DIR, exist_ok=True)
 
 TELEGRAM_TOKEN = "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
@@ -69,16 +68,6 @@ HEADERS = {
 def random_delay(a=2.0, b=4.0):
     time.sleep(random.uniform(a, b))
 
-def load_known_ids():
-    if os.path.exists(KNOWN_IDS_FILE):
-        with open(KNOWN_IDS_FILE, "r", encoding="utf-8") as f:
-            return set(json.load(f))
-    return set()
-
-def save_known_ids(ids_set):
-    with open(KNOWN_IDS_FILE, "w", encoding="utf-8") as f:
-        json.dump(sorted(list(ids_set)), f, indent=2)
-
 def extract_next_data(html, url=""):
     soup = BeautifulSoup(html, "html.parser")
     script = soup.find("script", id="__NEXT_DATA__")
@@ -91,7 +80,6 @@ def extract_next_data(html, url=""):
 
 # ---------- MAIN ----------
 def main():
-    known_ids = load_known_ids()
     collected = []
     
     # Pobierz pierwszą stronę
@@ -105,7 +93,7 @@ def main():
     offers = data["props"]["pageProps"]["data"]["searchAds"]["items"]
     print(f"Znaleziono ofert na pierwszej stronie: {len(offers)} | Całkowita liczba stron: {total_pages}")
     
-    process_offers(offers, known_ids, collected)
+    process_offers(offers, collected)
     
     # Paginacja
     for page in range(2, total_pages + 1):
@@ -118,9 +106,7 @@ def main():
         data = extract_next_data(r.text)
         offers = data["props"]["pageProps"]["data"]["searchAds"]["items"]
         print(f"Strona {page}: Znaleziono ofert {len(offers)}")
-        process_offers(offers, known_ids, collected)
-    
-    save_known_ids(known_ids)
+        process_offers(offers, collected)
     
     if collected:
         df = pd.DataFrame(collected)
@@ -139,7 +125,7 @@ def main():
     else:
         print("Brak ofert do zapisania.")
 
-def process_offers(offers, known_ids, collected):
+def process_offers(offers, collected):
     for idx, offer in enumerate(offers):
         offer_id = offer.get("id")
         slug = offer.get("slug")
@@ -191,10 +177,6 @@ def process_offers(offers, known_ids, collected):
             except ValueError:
                 data_dodania = created_at_first[:10]
         
-        # Nowe ogłoszenie – dodaj do known_ids (nawet bez zdjęć)
-        is_new = offer_id not in known_ids
-        if is_new:
-            known_ids.add(offer_id)
         
         # Szczegóły z strony szczegółów
         ogrzewanie = ""
@@ -324,3 +306,4 @@ def process_offers(offers, known_ids, collected):
 
 if __name__ == "__main__":
     main()
+
