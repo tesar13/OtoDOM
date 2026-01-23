@@ -1,0 +1,78 @@
+name: KozyDOM
+
+on:
+  schedule:
+    - cron: "30 21 * * *"  # uruchamia się codziennie o 22:30 czasu polskiego (21:30 UTC)
+  workflow_dispatch:      # pozwala uruchomić ręcznie
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_TOKEN: "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
+      TELEGRAM_CHAT_ID: "8541364332"
+    steps:
+      - name: Pobierz kod z repo
+        uses: actions/checkout@v3
+
+      - name: Zainstaluj Pythona
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 pandas openpyxl pyyaml
+
+      - name: Uruchom skrypt
+        run: |
+          python KozyDOM.py
+
+      - name: Zapisz plik Excel jako artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: raport_KozyDOM
+          path: KozyDOM_*.xlsx
+
+  retry_if_failed:
+    runs-on: ubuntu-latest
+    needs: run-script
+    if: failure()   # uruchomi się tylko jeśli run-script zakończy się błędem
+    steps:
+      - name: Odczekaj 15 minut
+        run: sleep 900
+
+      - name: Pobierz kod z repo
+        uses: actions/checkout@v3
+
+      - name: Zainstaluj Pythona
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 pandas openpyxl pyyaml
+
+      - name: Uruchom skrypt ponownie
+        run: |
+          python KozyDOM.py
+
+      - name: Zapisz plik Excel jako artifact (retry)
+        uses: actions/upload-artifact@v4
+        with:
+          name: raport_KozyDOM_retry
+          path: KozyDOM_*.xlsx
+          
+  notify-on-failure:
+    runs-on: ubuntu-latest
+    needs: [run-script, retry_if_failed]
+    if: failure()   # uruchomi się tylko jeśli poprzednie joby zakończą się błędem
+    steps:
+      - name: Wyślij powiadomienie na Telegrama
+        run: |
+          curl -s -X POST https://api.telegram.org/bot8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ/sendMessage \
+          -d chat_id=8541364332 \
+          -d text="❌ Skrypt ${{ github.workflow }} zakończył się błędem"
