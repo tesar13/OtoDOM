@@ -9,8 +9,8 @@ jobs:
   run-script:
     runs-on: ubuntu-latest
     env:
-      TELEGRAM_TOKEN: "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
-      TELEGRAM_CHAT_ID: "1233434142"
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - name: Pobierz kod z repo
         uses: actions/checkout@v3
@@ -73,6 +73,6 @@ jobs:
     steps:
       - name: Wyślij powiadomienie na Telegrama
         run: |
-          curl -s -X POST https://api.telegram.org/bot8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ/sendMessage \
-          -d chat_id=1233434142 \
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="❌ Skrypt ${{ github.workflow }} zakończył się błędem"
