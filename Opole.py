@@ -16,8 +16,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXCEL_DIR = os.path.join(BASE_DIR, "data_excel")
 os.makedirs(EXCEL_DIR, exist_ok=True)
 
-TELEGRAM_TOKEN = "8541364332:AAEHxTAHAibGgp5S5B2RckY8MJ_Md3z_ALQ"
-TELEGRAM_CHAT_ID = "1233434142"
+TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
 
 # Funkcja wysyłająca plik na Telegrama
@@ -241,6 +241,7 @@ def process_offers(offers, collected):
 
 if __name__ == "__main__":
     main()
+
 
 
 
