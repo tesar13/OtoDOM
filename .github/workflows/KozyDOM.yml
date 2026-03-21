@@ -2,7 +2,7 @@ name: KozyDOM
 
 on:
   schedule:
-    - cron: "0 18 * * *"  # uruchamia się codziennie o 19:00 czasu polskiego (17:00 UTC)
+    - cron: "0 17 * * *"  # uruchamia się codziennie o 19:00 czasu polskiego (17:00 UTC)
   workflow_dispatch:      # pozwala uruchomić ręcznie
 
 jobs:
