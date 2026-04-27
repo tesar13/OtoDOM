@@ -2,7 +2,7 @@ name: Trzebinia
 
 on:
   schedule:
-    - cron: "0 22 * * *"  # uruchamia się codziennie o 23:00 czasu polskiego (22:00 UTC)
+    - cron: "0 21 * * *"  # uruchamia się codziennie o 23:00 czasu polskiego (22:00 UTC)
   workflow_dispatch:      # pozwala uruchomić ręcznie
 
 jobs:
