@@ -2,7 +2,7 @@ name: Opole
 
 on:
   schedule:
-    - cron: "0 21 * * *"  # uruchamia się codziennie o 22:00 czasu polskiego (21:00 UTC)
+    - cron: "0 20 * * *"  # uruchamia się codziennie o 22:00 czasu polskiego (21:00 UTC)
   workflow_dispatch:      # pozwala uruchomić ręcznie
 
 jobs:
